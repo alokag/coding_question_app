@@ -1,626 +1,254 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>JavaScript Concepts Quiz — 30 Questions</title>
-<style>
-  /* Minimal iOS-like / modern responsive styling */
-  :root{
-    --bg1: #f6f9ff;
-    --card: rgba(255,255,255,0.9);
-    --accent: #007aff;
-    --muted: #6b7280;
-    --success: #16a34a;
-    --danger: #ef4444;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background: linear-gradient(180deg,var(--bg1), #ffffff 120%);
-    color:#0f172a;
-    padding:20px;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{ max-width:980px; margin:18px auto; }
-  header{ text-align:center; margin-bottom:18px; }
-  h1{ margin:6px 0; font-size:28px; letter-spacing:-0.4px; }
-  p.lead{ margin:0; color:var(--muted); }
-
-  .controls { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:18px 0 26px; }
-  .sel, .btn {
-    padding:10px 14px; border-radius:12px; border:1px solid rgba(16,24,40,0.06);
-    background:var(--card); cursor:pointer; font-weight:600; color:#0f172a;
-    box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-  }
-  .chapters { display:flex; gap:8px; overflow:auto; padding-bottom:6px; justify-content:center; margin-bottom:12px; }
-  .chap { padding:10px 12px; border-radius:14px; background:rgba(255,255,255,0.9); cursor:pointer; border:1px solid rgba(16,24,40,0.04); font-weight:600; }
-  .chap.active { background: linear-gradient(90deg,#fff,#f2f7ff); box-shadow:0 6px 18px rgba(0,122,255,0.12); color:var(--accent) }
-
-  .card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,255,0.95));
-    border-radius:14px;
-    padding:18px;
-    box-shadow: 0 12px 32px rgba(2,6,23,0.06);
-    border: 1px solid rgba(16,24,40,0.04);
-  }
-  .meta { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:12px; }
-  .qnum { font-weight:700; color:#0b1220; }
-  .qtext { font-size:18px; margin-bottom:12px; color:#07132a; }
-  .options { display:grid; gap:10px; }
-  .opt {
-    padding:10px 12px; border-radius:10px; border:1px solid rgba(2,6,23,0.06); background:#fff;
-    cursor:pointer; font-weight:600; color:#0b1220;
-    transition: transform .08s ease, box-shadow .12s ease;
-  }
-  .opt:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(2,6,23,0.06); }
-  .opt.selected { background:linear-gradient(90deg,#f2f8ff,#f9fbff); border-color: rgba(0,122,255,0.3); box-shadow: 0 8px 16px rgba(0,122,255,0.06); }
-  .actions { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
-  .btn.primary { background:var(--accent); color:#fff; border:none; box-shadow:0 10px 26px rgba(0,122,255,0.14); }
-  .btn.ghost { background:transparent; border:1px solid rgba(16,24,40,0.06); }
-  .explanation { margin-top:14px; padding:12px; border-radius:10px; background: #0f172a; color:#fff; font-size:14px; display:none; line-height:1.45; }
-  .explanation.show { display:block; }
-  .explanation .right { color:var(--success); font-weight:700; display:inline-block; margin-left:6px; }
-  .explanation .wrong { color:var(--danger); font-weight:700; display:inline-block; margin-left:6px; }
-
-  footer { margin-top:18px; text-align:center; color:var(--muted); font-size:13px; }
-
-  /* responsive */
-  @media (max-width:640px){
-    .qtext { font-size:17px; }
-    .options { gap:8px; }
-    .controls { gap:6px; }
-    .card { padding:14px; border-radius:12px; }
-    .chap { padding:8px 10px; font-size:14px; border-radius:12px; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Interview Notes (1‑Day Revision)</title>
+  <style>
+    body {
+      font-family: Inter, sans-serif;
+      background: #f6f7fb;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.7;
+      color: #222;
+    }
+    h1, h2, h3 {
+      font-weight: 700;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .section {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    pre {
+      background: #1e1e1e;
+      color: #eaeaea;
+      padding: 12px;
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+    code {
+      font-family: Consolas, monospace;
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>JavaScript Concepts Quiz — 30 Core Questions</h1>
-    <p class="lead">Browse chapters, answer short multiple-choice questions, and reveal concise explanations. Perfect for interview prep or quick revision.</p>
-  </header>
+  <h1>JavaScript Interview Notes – 1‑Day Revision Guide</h1>
 
-  <nav class="chapters" id="chapterTabs" aria-label="Chapters">
-    <!-- chapters inserted by JS -->
-  </nav>
+  <div class="section">
+    <h2>1. Variables: let, const, var</h2>
+    <p>JavaScript provides three ways to declare variables:</p>
+    <ul>
+      <li><strong>var</strong> – function‑scoped, hoisted, outdated.</li>
+      <li><strong>let</strong> – block‑scoped, used for reassignable values.</li>
+      <li><strong>const</strong> – block‑scoped, cannot be reassigned.</li>
+    </ul>
+    <pre><code>let count = 1;
+count++;
 
-  <div class="controls" role="toolbar" aria-label="Controls">
-    <select id="chapterSelect" class="sel" aria-label="Select Chapter"></select>
-    <button id="prevBtn" class="btn ghost" title="Previous question">◀ Previous</button>
-    <button id="nextBtn" class="btn ghost" title="Next question">Next ▶</button>
-    <button id="showAnswerBtn" class="btn primary">Show Answer</button>
-    <button id="resetBtn" class="btn ghost">Reset Chapter</button>
+const user = { name: "Monu" };
+user.name = "Alok"; // allowed – object mutation
+    </code></pre>
+    <p><strong>Real‑life usage:</strong> const for configs, let for loops and temp variables.</p>
   </div>
 
-  <main id="quizArea">
-    <!-- question card -->
-    <section class="card" id="questionCard" aria-live="polite">
-      <div class="meta">
-        <div class="qnum" id="qIndex">1 / 30</div>
-        <div class="qchapter" id="qChapter">Chapter</div>
-      </div>
+  <div class="section">
+    <h2>2. Hoisting</h2>
+    <p>JavaScript moves declarations to the top of their scope. <strong>var</strong> is hoisted with undefined, while <strong>let</strong> and <strong>const</strong> exist in TDZ (Temporal Dead Zone).</p>
+    <pre><code>console.log(a); // undefined
+var a = 10;
 
-      <div class="qtext" id="qText">Loading...</div>
+console.log(b); // ReferenceError
+let b = 20;
+    </code></pre>
+  </div>
 
-      <div class="options" id="optionsList" role="list">
-        <!-- options inserted here -->
-      </div>
+  <div class="section">
+    <h2>3. Functions: Declaration vs Expression vs Arrow</h2>
+    <pre><code>// Declaration
+function add(a, b) { return a + b; }
 
-      <div class="actions">
-        <button id="markBtn" class="btn ghost">Mark for Review</button>
-        <div style="flex:1"></div>
-        <div id="progress" style="align-self:center;color:var(--muted);font-weight:600"></div>
-      </div>
+// Expression
+const mul = function(a, b) { return a * b; }
 
-      <div class="explanation" id="explanationBox" aria-hidden="true"></div>
-    </section>
-  </main>
+// Arrow function
+const sub = (a, b) => a - b;
+    </code></pre>
+    <p><strong>Usage:</strong> Arrow functions are best for short callbacks and array operations.</p>
+  </div>
 
-  <footer>
-    <small>30 questions • 6 chapters • Click "Show Answer" for explanation</small>
-  </footer>
-</div>
+  <div class="section">
+    <h2>4. Execution Context & Call Stack</h2>
+    <p>JavaScript runs code inside execution contexts:</p>
+    <ul>
+      <li>Global Execution Context</li>
+      <li>Function Execution Context</li>
+    </ul>
+    <p>Call stack manages function invocation order.</p>
+  </div>
 
-<script>
-/*
-  Structure:
-  chapters: array of { id, title, questions: [ { q, choices: [], answer: index, explanation } ] }
-  UI: chapter tabs + selector; prev/next navigation; show answer reveals explanation and marks correct/incorrect
-*/
+  <div class="section">
+    <h2>5. Closures</h2>
+    <p>A closure is created when a function remembers its outer scope even after the outer function has executed.</p>
+    <pre><code>function outer() {
+  let counter = 0;
+  return function() {
+    counter++;
+    return counter;
+  };
+}
+const inc = outer();
+inc(); // 1
+inc(); // 2
+    </code></pre>
+    <p><strong>Use case:</strong> Private variables, memoization, custom hooks.</p>
+  </div>
 
-const chapters = [
-  {
-    id: 'basics',
-    title: 'Basics & Syntax',
-    questions: [
-      {
-        q: 'What is the result of `typeof NaN` in JavaScript?',
-        choices: ['"number"', '"NaN"', '"undefined"', '"object"'],
-        answer: 0,
-        explanation: '`NaN` is a special numeric value; `typeof NaN` returns `"number"`. It represents "Not-a-Number" but is still of type number.'
-      },
-      {
-        q: 'Which statement correctly declares a block-scoped variable?',
-        choices: ['`var x = 1;`', '`let x = 1;`', '`const x = 1;`', 'Both B and C'],
-        answer: 3,
-        explanation: '`let` and `const` are block-scoped (ES6). `var` is function-scoped. Use `const` for immutable bindings and `let` for reassignable variables.'
-      },
-      {
-        q: 'What will `0.1 + 0.2 === 0.3` evaluate to?',
-        choices: ['true', 'false', 'TypeError', 'undefined'],
-        answer: 1,
-        explanation: 'Due to floating-point precision, `0.1 + 0.2` yields `0.30000000000000004`, so strict equality with `0.3` is false.'
-      },
-      {
-        q: 'Which of the following creates a new object with prototype `proto`?',
-        choices: ['`Object.create(proto)`', '`new Object(proto)`', '`{__proto__: proto}`', 'Both A and C'],
-        answer: 3,
-        explanation: '`Object.create(proto)` creates an object with the given prototype. The literal `{ __proto__: proto }` also sets the prototype but `Object.create` is the canonical way.'
-      },
-      {
-        q: 'What is "hoisting" in JavaScript?',
-        choices: [
-          'Variables are moved to the top of their scope during compilation',
-          'Functions cannot be used before they are declared',
-          'Memory is garbage collected automatically',
-          'A function that runs in the background'
-        ],
-        answer: 0,
-        explanation: 'Hoisting refers to how declarations (`var`, functions) are conceptually moved to the top of their scope, so they can be referenced before the line they appear on (with `var` being undefined until assignment).'
-      }
-    ]
-  },
+  <div class="section">
+    <h2>6. Event Loop, Microtasks & Macrotasks</h2>
+    <p>Handles async operations and keeps JS non‑blocking.</p>
+    <pre><code>console.log("A");
+setTimeout(() => console.log("B"));
+Promise.resolve().then(() => console.log("C"));
+console.log("D");
+// Output: A D C B
+    </code></pre>
+  </div>
 
-  {
-    id: 'data-structures',
-    title: 'Data Structures & Collections',
-    questions: [
-      {
-        q: 'Which structure preserves insertion order and allows unique keys?',
-        choices: ['Object', 'Map', 'Set', 'WeakMap'],
-        answer: 2,
-        explanation: '`Set` stores unique values and iterates in insertion order. `Map` preserves insertion order for key-value pairs. `Object` insertion order is preserved for string keys in modern engines but Sets explicitly guarantee uniqueness.'
-      },
-      {
-        q: 'How do you shallow-copy an array `a` in modern JS?',
-        choices: ['`a.copy()`', '`Array.clone(a)`', '`[...a]`', '`a.slice(1)`'],
-        answer: 2,
-        explanation: 'Spread (`[...a]`) or `a.slice()` create a shallow copy of an array. `slice(1)` would skip the first element.'
-      },
-      {
-        q: 'Which of these allows weakly-held keys (garbage-collected)?',
-        choices: ['Map', 'WeakMap', 'Set', 'WeakSet'],
-        answer: 1,
-        explanation: '`WeakMap` and `WeakSet` hold weak references to objects as keys (WeakMap) or values (WeakSet) enabling garbage collection when there are no other refs. `Map` and `Set` keep strong references.'
-      },
-      {
-        q: 'What will `new Set([1,2,2,3]).size` return?',
-        choices: ['2', '3', '4', 'Error'],
-        answer: 1,
-        explanation: 'Duplicates are removed in a Set. The unique values are [1,2,3] so size is 3.'
-      },
-      {
-        q: 'Which is the fastest typical way to check existence of key "k" in object `o` (own property)?',
-        choices: ['`o.k`', '`k in o`', '`o.hasOwnProperty("k")`', '`Object.keys(o).includes("k")`'],
-        answer: 2,
-        explanation: '`hasOwnProperty` checks own properties only (not prototype). Using `in` checks prototype chain too. Direct access `o.k` retrieves the value but does not test presence reliably (could be undefined).'
-      }
-    ]
-  },
+  <div class="section">
+    <h2>7. Async Programming: Promises & async/await</h2>
+    <pre><code>async function load() {
+  const data = await fetch('/api');
+  return data.json();
+}
+    </code></pre>
+    <p><strong>Real‑life:</strong> API calls, file operations, database operations.</p>
+  </div>
 
-  {
-    id: 'algorithms',
-    title: 'Algorithms & Complexity',
-    questions: [
-      {
-        q: 'What is the time complexity of binary search on a sorted array of n elements?',
-        choices: ['O(n)', 'O(log n)', 'O(1)', 'O(n log n)'],
-        answer: 1,
-        explanation: 'Binary search halves the search space each step → O(log n) time.'
-      },
-      {
-        q: 'Which algorithmic technique is used by the QuickSort average case?',
-        choices: ['Dynamic programming', 'Divide and conquer', 'Greedy', 'Backtracking'],
-        answer: 1,
-        explanation: 'QuickSort divides the array using a pivot and recursively sorts subarrays — divide and conquer.'
-      },
-      {
-        q: 'Which data structure provides O(1) amortized insert and O(1) average access by index?',
-        choices: ['Linked List', 'Array (dynamic)', 'Binary Tree', 'HashMap'],
-        answer: 1,
-        explanation: 'Dynamic arrays (JS Array) have amortized O(1) push and O(1) indexed access; linked lists have O(n) index access.'
-      },
-      {
-        q: 'When is a hash table (object/map) unsuitable?',
-        choices: [
-          'When you need ordered traversal by insertion time',
-          'When keys are objects and weak references are required',
-          'When worst-case time matters and adversarial input possible',
-          'All of the above'
-        ],
-        answer: 3,
-        explanation: 'Hash tables are unsuitable when order or weak references are required; adversarial inputs might cause collision issues (rare with good hashing).'
-      },
-      {
-        q: 'What does "amortized O(1)" mean for push operations?',
-        choices: [
-          'Every operation costs constant time',
-          'Average time per operation is constant over a sequence, though some ops may be costly',
-          'Operations are logarithmic',
-          'Push is O(n)'
-        ],
-        answer: 1,
-        explanation: 'Amortized analysis spreads expensive resize costs over many cheap operations to get an average of O(1) per operation.'
-      }
-    ]
-  },
-
-  {
-    id: 'async-web',
-    title: 'Asynchronous JS & Web APIs',
-    questions: [
-      {
-        q: 'What does `Promise.all([p1,p2])` do if one promise rejects?',
-        choices: [
-          'Returns results of fulfilled promises and ignores rejection',
-          'Resolves with an array having undefined',
-          'Rejects immediately with that rejection reason',
-          'Waits for all to settle and returns status'
-        ],
-        answer: 2,
-        explanation: '`Promise.all` rejects as soon as any input promise rejects, with that rejection reason. Use `Promise.allSettled` to wait for all outcomes.'
-      },
-      {
-        q: 'Which event loop phase handles microtasks (e.g., promise callbacks)?',
-        choices: ['Timers (setTimeout)', 'I/O callbacks', 'Microtask queue (after current task)', 'Rendering only'],
-        answer: 2,
-        explanation: 'Microtasks (Promises, queueMicrotask) run after the current macrotask but before rendering or next tick.'
-      },
-      {
-        q: 'What is the difference between `==` and `===`?',
-        choices: [
-          'No difference',
-          '`==` does strict equality; `===` coerces types',
-          '`==` performs type coercion; `===` does strict equality',
-          '`===` is legacy'
-        ],
-        answer: 2,
-        explanation: '`==` performs type coercion before comparison; `===` checks both type and value without coercion — prefer `===` for predictability.'
-      },
-      {
-        q: 'Which API would you use to make HTTP requests in modern JS?',
-        choices: ['XMLHttpRequest', 'fetch', 'axios only', 'ActiveXObject'],
-        answer: 1,
-        explanation: '`fetch` is the modern Promise-based web API for HTTP requests. Libraries like Axios wrap fetch/XHR with conveniences.'
-      },
-      {
-        q: 'What is `async/await` syntactic sugar for?',
-        choices: ['Callbacks', 'Generators', 'Promises', 'setTimeout'],
-        answer: 2,
-        explanation: '`async/await` is syntactic sugar over Promises — `await` pauses async function until a promise resolves.'
-      }
-    ]
-  },
-
-  {
-    id: 'patterns-arch',
-    title: 'Design Patterns & Architecture',
-    questions: [
-      {
-        q: 'Which pattern ensures a class has only one instance?',
-        choices: ['Factory', 'Observer', 'Singleton', 'Strategy'],
-        answer: 2,
-        explanation: 'Singleton restricts instantiation to a single instance. In JS, modules often act like singletons by default.'
-      },
-      {
-        q: 'What does "dependency injection" help with?',
-        choices: [
-          'Hard-coding dependencies inside modules',
-          'Reducing modularity',
-          'Decoupling modules for easier testing and substitution',
-          'Increasing runtime errors'
-        ],
-        answer: 2,
-        explanation: 'Dependency injection provides dependencies from the outside, enabling decoupling and easier testing/mocking.'
-      },
-      {
-        q: 'Which principle does SOLID\'s "Open/Closed" refer to?',
-        choices: [
-          'Open for modification, closed for extension',
-          'Open for extension, closed for modification',
-          'Open source, closed license',
-          'None of the above'
-        ],
-        answer: 1,
-        explanation: 'Open/Closed: modules should be open for extension but closed for modification (you can add behavior without changing existing code).'
-      },
-      {
-        q: 'What is an event-driven architecture useful for?',
-        choices: [
-          'Synchronous blocking workflows',
-          'Decoupled systems reacting to state changes or events',
-          'Only single-threaded applications',
-          'Replacing databases'
-        ],
-        answer: 1,
-        explanation: 'Event-driven systems decouple producers and consumers; components react to events, improving scalability and decoupling.'
-      },
-      {
-        q: 'Which is a typical use for a "throttling" mechanism?',
-        choices: [
-          'Stop memory leaks',
-          'Limit the rate of repeated actions (e.g., button clicks, scroll handlers)',
-          'Encrypt data',
-          'Create new threads'
-        ],
-        answer: 1,
-        explanation: 'Throttling limits how frequently a function runs over time (useful for scroll/resizing handlers, API call limits).'
-      }
-    ]
-  },
-
-  {
-    id: 'advanced',
-    title: 'Advanced JS & Performance',
-    questions: [
-      {
-        q: 'What is "debouncing" used for?',
-        choices: [
-          'Group multiple events and call once after inactivity',
-          'Call something repeatedly at fixed intervals',
-          'Prevent memory leaks',
-          'Avoid network calls entirely'
-        ],
-        answer: 0,
-        explanation: 'Debouncing delays execution until a flurry of events has settled (e.g., search autosuggest triggered after typing stops).'
-      },
-      {
-        q: 'Which tool helps you inspect memory leaks and performance in the browser?',
-        choices: ['Node Inspector', 'Chrome DevTools Performance & Memory panels', 'grep', 'NPM'],
-        answer: 1,
-        explanation: 'Chrome/Edge/Safari devtools provide Performance and Memory profilers to find bottlenecks and leaks.'
-      },
-      {
-        q: 'What is event delegation?',
-        choices: [
-          'Attaching events to many child elements directly',
-          'Attaching a single event listener on a parent to handle children events',
-          'Delegating events to remote servers',
-          'Only used by React'
-        ],
-        answer: 1,
-        explanation: 'Event delegation leverages event bubbling to use a single listener on a parent; improves performance for many dynamic children.'
-      },
-      {
-        q: 'When should you use `Web Workers`?',
-        choices: [
-          'For DOM updates',
-          'For long-running CPU-heavy tasks to avoid blocking main thread',
-          'To persist data in browser storage',
-          'To replace service workers'
-        ],
-        answer: 1,
-        explanation: 'Web Workers run scripts in background threads, avoiding UI freezes for compute-heavy operations.'
-      },
-      {
-        q: 'What is "lazy loading"?',
-        choices: [
-          'Loading everything at startup',
-          'Deferring loading of resources until needed',
-          'Compressing code',
-          'Running tasks in background threads'
-        ],
-        answer: 1,
-        explanation: 'Lazy loading defers resource loading (images, modules) until required — improves initial load performance.'
-      }
-    ]
-  }
-];
-
-// Flatten questions for simple indexing
-let flat = [];
-chapters.forEach((c,ci)=>{
-  c.questions.forEach((q,qi)=>{
-    flat.push({chapterId:c.id, chapterTitle:c.title, chapterIndex:ci, qIndex:qi, ...q});
-  });
-});
-
-let state = {
-  chapterIndex: 0,
-  chapterQuestionIndex: 0,
-  globalIndex: 0,
-  selections: new Array(flat.length).fill(null),
-  marked: new Set()
+  <div class="section">
+    <h2>8. this Binding</h2>
+    <pre><code>const obj = {
+  name: "JS",
+  say() { console.log(this.name); }
 };
+obj.say();
+    </code></pre>
+    <p><strong>Note:</strong> Arrow functions don't have their own <code>this</code>.</p>
+  </div>
 
-// build UI chapter tabs and selector
-const chapterTabs = document.getElementById('chapterTabs');
-const chapterSelect = document.getElementById('chapterSelect');
-chapters.forEach((c, idx)=>{
-  const el = document.createElement('div');
-  el.className = 'chap';
-  el.textContent = c.title;
-  el.dataset.idx = idx;
-  el.onclick = ()=> selectChapter(idx);
-  chapterTabs.appendChild(el);
+  <div class="section">
+    <h2>9. Prototypes & Inheritance</h2>
+    <pre><code>function Person(name){ this.name = name; }
+Person.prototype.say = function(){ console.log(this.name); };
+    </code></pre>
+    <p><strong>Real‑life:</strong> Reusable object methods.</p>
+  </div>
 
-  const opt = document.createElement('option');
-  opt.value = idx;
-  opt.textContent = c.title;
-  chapterSelect.appendChild(opt);
-});
-
-// UI elements
-const qIndexEl = document.getElementById('qIndex');
-const qTextEl = document.getElementById('qText');
-const optionsList = document.getElementById('optionsList');
-const qChapterEl = document.getElementById('qChapter');
-const explanationBox = document.getElementById('explanationBox');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const showAnswerBtn = document.getElementById('showAnswerBtn');
-const resetBtn = document.getElementById('resetBtn');
-const markBtn = document.getElementById('markBtn');
-const progressEl = document.getElementById('progress');
-
-// navigation
-prevBtn.addEventListener('click', ()=> nav(-1));
-nextBtn.addEventListener('click', ()=> nav(1));
-showAnswerBtn.addEventListener('click', showAnswer);
-resetBtn.addEventListener('click', resetChapter);
-chapterSelect.addEventListener('change', (e)=> selectChapter(Number(e.target.value)));
-markBtn.addEventListener('click', toggleMark);
-
-// initialize
-function selectChapter(ci){
-  state.chapterIndex = ci;
-  // compute global index (start of chapter)
-  const start = chapters.slice(0,ci).reduce((acc,c)=> acc + c.questions.length, 0);
-  state.globalIndex = start + 0;
-  state.chapterQuestionIndex = 0;
-  chapterSelect.value = ci;
-  updateChapterTabs();
-  render();
+  <div class="section">
+    <h2>10. Classes</h2>
+    <pre><code>class Car {
+  constructor(model) { this.model = model; }
+  start(){ console.log("Starting", this.model); }
 }
+    </code></pre>
+  </div>
 
-function updateChapterTabs(){
-  document.querySelectorAll('.chap').forEach((el,i)=>{
-    el.classList.toggle('active', i === state.chapterIndex);
-  });
-}
+  <div class="section">
+    <h2>11. Arrays & High‑Order Methods</h2>
+    <p>map, filter, reduce are essential.</p>
+    <pre><code>const prices = [10,20,30];
+const total = prices.reduce((a,b) => a + b, 0);
+    </code></pre>
+  </div>
 
-function nav(dir){
-  const chapter = chapters[state.chapterIndex];
-  const qlen = chapter.questions.length;
-  let idx = state.chapterQuestionIndex + dir;
-  if(idx < 0) idx = 0;
-  if(idx >= qlen) idx = qlen - 1;
-  state.chapterQuestionIndex = idx;
-  // global index:
-  const start = chapters.slice(0,state.chapterIndex).reduce((acc,c)=> acc + c.questions.length, 0);
-  state.globalIndex = start + state.chapterQuestionIndex;
-  render();
-}
+  <div class="section">
+    <h2>12. Spread & Rest</h2>
+    <pre><code>const arr = [1,2,3];
+const newArr = [...arr, 4];
 
-function render(){
-  const g = state.globalIndex;
-  const item = flat[g];
-  qIndexEl.textContent = `${state.chapterQuestionIndex + 1} / ${chapters[state.chapterIndex].questions.length}`;
-  qChapterEl.textContent = `${item.chapterTitle}`;
-  qTextEl.textContent = item.q;
-  explanationBox.classList.remove('show');
-  explanationBox.setAttribute('aria-hidden','true');
-  explanationBox.textContent = '';
-  // build options
-  optionsList.innerHTML = '';
-  item.choices.forEach((c, i)=>{
-    const div = document.createElement('div');
-    div.className = 'opt' + ((state.selections[g] === i) ? ' selected' : '');
-    div.setAttribute('role','button');
-    div.tabIndex = 0;
-    div.textContent = c;
-    div.onclick = ()=> selectOption(g, i);
-    div.onkeypress = (e)=> { if(e.key === 'Enter') selectOption(g,i); };
-    optionsList.appendChild(div);
-  });
-  // update progress
-  const chapStart = chapters.slice(0,state.chapterIndex).reduce((acc,c)=> acc + c.questions.length, 0);
-  const chapEnd = chapStart + chapters[state.chapterIndex].questions.length;
-  const answered = flat.slice(chapStart,chapEnd).filter((_, idx)=> state.selections[chapStart+idx] !== null).length;
-  progressEl.textContent = `Answered: ${answered}/${chapters[state.chapterIndex].questions.length}`
+function sum(...nums) { return nums.reduce((a,b) => a+b); }
+    </code></pre>
+  </div>
 
-  // mark button label
-  markBtn.textContent = state.marked.has(g) ? 'Unmark' : 'Mark for Review';
-  // ensure chapter tabs/selector match
-  chapterSelect.value = state.chapterIndex;
+  <div class="section">
+    <h2>13. Destructuring</h2>
+    <pre><code>const user = {name: "Alok", age: 25};
+const {name, age} = user;
+    </code></pre>
+  </div>
 
-  // scroll to top of card (helpful on mobile)
-  document.getElementById('questionCard').scrollIntoView({behavior:'smooth', block:'center'});
-}
+  <div class="section">
+    <h2>14. Modules (import/export)</h2>
+    <pre><code>// utils.js
+export function add(a,b){ return a+b; }
 
-function selectOption(globalIdx, choiceIdx){
-  state.selections[globalIdx] = choiceIdx;
-  // highlight selection
-  render();
-}
+// main.js
+import { add } from './utils.js';
+    </code></pre>
+  </div>
 
-function showAnswer(){
-  const g = state.globalIndex;
-  const item = flat[g];
-  const user = state.selections[g];
-  const correct = item.answer;
-  // show explanation
-  let html = '';
-  if(user === null){
-    html += '<div><strong>No answer selected.</strong></div>';
-  } else if(user === correct){
-    html += `<div><strong>Correct</strong> <span class="right">✓</span></div>`;
-  } else {
-    html += `<div><strong>Incorrect</strong> <span class="wrong">✕</span></div>`;
-    html += `<div style="margin-top:6px">Your answer: <em>${item.choices[user]}</em></div>`;
+  <div class="section">
+    <h2>15. DOM Manipulation</h2>
+    <pre><code>document.querySelector("#box").innerText = "Updated";
+    </code></pre>
+  </div>
+
+  <div class="section">
+    <h2>16. Event Delegation</h2>
+    <pre><code>document.body.addEventListener("click", e => {
+  if(e.target.matches("button")){
+    console.log("Button clicked");
   }
-  html += `<div style="margin-top:8px"><strong>Answer:</strong> ${item.choices[correct]}</div>`;
-  html += `<div style="margin-top:10px">${item.explanation}</div>`;
-  explanationBox.innerHTML = html;
-  explanationBox.classList.add('show');
-  explanationBox.setAttribute('aria-hidden','false');
-
-  // visually mark options with right/wrong colors
-  const optEls = optionsList.querySelectorAll('.opt');
-  optEls.forEach((el, idx)=>{
-    el.style.borderColor = '';
-    el.style.background = '';
-    el.style.boxShadow = '';
-    el.style.color = '';
-  });
-  optEls[correct].style.borderColor = 'rgba(16,185,129,0.4)';
-  optEls[correct].style.background = 'linear-gradient(90deg,#ecfdf5,#f0fdf4)';
-  optEls[correct].style.boxShadow = '0 8px 20px rgba(16,185,129,0.06)';
-  optEls[correct].style.color = '#064e3b';
-  if(user !== null && user !== correct){
-    optEls[user].style.borderColor = 'rgba(239,68,68,0.25)';
-    optEls[user].style.background = 'linear-gradient(90deg,#fff5f5,#fffbfb)';
-    optEls[user].style.color = '#7f1d1d';
-  }
-}
-
-// reset chapter selections
-function resetChapter(){
-  const chapStart = chapters.slice(0,state.chapterIndex).reduce((acc,c)=> acc + c.questions.length, 0);
-  const qlen = chapters[state.chapterIndex].questions.length;
-  for(let i=0;i<qlen;i++){
-    state.selections[chapStart + i] = null;
-  }
-  state.marked.clear();
-  render();
-}
-
-function toggleMark(){
-  const g = state.globalIndex;
-  if(state.marked.has(g)) state.marked.delete(g); else state.marked.add(g);
-  markBtn.textContent = state.marked.has(g) ? 'Unmark' : 'Mark for Review';
-}
-
-// keyboard shortcuts (optional)
-document.addEventListener('keydown', (e)=>{
-  if(e.key === 'ArrowRight') nav(1);
-  if(e.key === 'ArrowLeft') nav(-1);
-  if(e.key === 's') showAnswer();
 });
+    </code></pre>
+  </div>
 
-// initialize at first chapter
-selectChapter(0);
+  <div class="section">
+    <h2>17. Debounce & Throttle</h2>
+    <p>Used in scroll, resize, input events.</p>
+    <pre><code>function debounce(fn, delay){
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), delay);
+  };
+}
+    </code></pre>
+  </div>
 
-// allow clicking chapter tabs to jump to specific question index
-document.getElementById('chapterTabs').addEventListener('click', (e)=>{
-  const el = e.target.closest('.chap');
-  if(!el) return;
-  const idx = Number(el.dataset.idx);
-  selectChapter(idx);
-});
-</script>
+  <div class="section">
+    <h2>18. Error Handling</h2>
+    <pre><code>try {
+  risky();
+} catch (err) {
+  console.error(err);
+}
+    </code></pre>
+  </div>
+
+  <div class="section">
+    <h2>19. Fetch API</h2>
+    <pre><code>fetch('/api')
+ .then(res => res.json())
+ .then(console.log)
+    </code></pre>
+  </div>
+
+  <div class="section">
+    <h2>20. LocalStorage & SessionStorage</h2>
+    <pre><code>localStorage.setItem("token", "abc");
+const t = localStorage.getItem("token");
+    </code></pre>
+  </div>
 </body>
 </html>
