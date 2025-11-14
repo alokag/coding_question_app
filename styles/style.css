@@ -15,42 +15,36 @@ h1 { text-align:center; margin-bottom:5px; }
 footer { margin-top:30px; text-align:center; color:#666; }
 */
 /* ---------- Global Styles ---------- */
+/* ---------- Global iOS Styling ---------- */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
   margin: 0;
   padding: 30px;
-  background: linear-gradient(135deg, #7f5af0, #00c6ff);
+  background: linear-gradient(145deg, #dfe9f3, #ffffff);
   min-height: 100vh;
-  color: #ffffff;
+  color: #1c1c1e;
   box-sizing: border-box;
 }
 
-/* For smaller phones */
+/* Soft padding for mobile */
 @media (max-width: 480px) {
   body {
-    padding: 18px;
+    padding: 20px;
   }
 }
 
-/* ---------- Headings ---------- */
+/* ---------- Headers ---------- */
 
 h1 {
   text-align: center;
-  font-size: 36px;
+  font-size: 34px;
   font-weight: 700;
   margin-bottom: 40px;
-  color: #ffffff;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-@media (max-width: 480px) {
-  h1 {
-    font-size: 28px;
-    margin-bottom: 25px;
-  }
+  letter-spacing: -0.5px;
+  color: #111;
 }
 
 /* ---------- Level Cards on Home Page ---------- */
@@ -63,24 +57,24 @@ h1 {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  padding: 25px;
-  border-radius: 18px;
-  width: 200px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px) saturate(180%);
+  padding: 22px;
+  border-radius: 22px;
+  width: 220px;
   text-align: center;
   text-decoration: none;
   font-weight: 600;
-  color: #ffffff;
+  color: #111;
   font-size: 18px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.08);
+  border: 1px solid rgba(255,255,255,0.4);
 }
 
 .card:hover {
-  transform: translateY(-8px) scale(1.05);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
-  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-6px);
+  background: rgba(255,255,255,0.75);
 }
 
 /* Mobile layout */
@@ -101,25 +95,26 @@ h1 {
 }
 
 .question-card {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(16px) saturate(180%);
   padding: 25px;
-  border-radius: 16px;
-  margin-bottom: 22px;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-  transition: transform 0.2s ease, background 0.3s ease;
+  border-radius: 22px;
+  margin-bottom: 25px;
+  color: #111;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255,255,255,0.38);
 }
 
 .question-card:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.75);
 }
 
 /* Mobile adjustments */
 @media (max-width: 600px) {
   .question-card {
-    padding: 15px;
+    padding: 18px;
   }
 }
 
@@ -129,65 +124,70 @@ h1 {
   margin-top: 0;
   font-size: 22px;
   font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .question-card p {
   font-size: 16px;
   line-height: 1.6;
+  font-weight: 400;
+  opacity: 0.85;
 }
 
-/* More compact fonts on small screens */
 @media (max-width: 480px) {
   .question-card h3 {
-    font-size: 19px;
+    font-size: 20px;
   }
   .question-card p {
     font-size: 14px;
   }
 }
 
-/* ---------- Button Styles ---------- */
+/* ---------- Buttons (iOS Style) ---------- */
 
 button {
   margin-top: 12px;
-  padding: 10px 18px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 12px;
+  border-radius: 18px;
   cursor: pointer;
-  background: #00d4ff;
-  color: #003044;
+  background: #007aff;
+  color: white;
   font-weight: 600;
   font-size: 15px;
-  transition: background 0.25s ease, transform 0.2s ease;
-  width: auto;
-}
-
-/* Full width button on small screens */
-@media (max-width: 480px) {
-  button {
-    width: 100%;
-    padding: 12px 0;
-    font-size: 16px;
-  }
+  transition: 0.25s ease;
+  box-shadow: 0 6px 18px rgba(0,122,255,0.3);
 }
 
 button:hover {
-  background: #6df8ff;
+  background: #0a84ff;
   transform: translateY(-2px);
 }
 
-/* ---------- Code Snippet Box ---------- */
+button:active {
+  transform: scale(0.97);
+}
+
+/* Full width on mobile */
+@media (max-width: 480px) {
+  button {
+    width: 100%;
+    padding: 14px 0;
+  }
+}
+
+/* ---------- Code Snippet Box (iOS Terminal Style) ---------- */
 
 pre {
-  background: rgba(0, 0, 0, 0.65);
-  color: #00ffea;
-  padding: 14px;
-  border-radius: 12px;
+  background: #1c1c1e;
+  color: #39ffcb;
+  padding: 16px;
+  border-radius: 16px;
   overflow-x: auto;
-  margin-top: 15px;
+  margin-top: 18px;
   font-size: 14px;
-  border-left: 4px solid #00eaff;
-  box-shadow: inset 0 0 12px rgba(0,255,250,0.25);
+  border-left: 4px solid #34c759;
+  box-shadow: inset 0 0 12px rgba(0,255,200,0.25);
 }
 
 /* Smaller font for mobile */
@@ -202,15 +202,16 @@ pre {
 .back-btn {
   display: inline-block;
   margin-bottom: 20px;
-  color: white;
+  color: #007aff;
   text-decoration: none;
   font-weight: 500;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.3);
   padding: 10px 14px;
-  border-radius: 10px;
-  transition: 0.3s;
+  border-radius: 12px;
+  transition: 0.3s ease;
 }
 
 .back-btn:hover {
-  background: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.55);
 }
+
