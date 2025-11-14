@@ -214,3 +214,69 @@ pre {
 .back-btn:hover {
   background: rgba(255,255,255,0.35);
 }
+
+
+/* Base mobile-first adjustments */
+body {
+  padding: 12px;
+  font-size: 15px;
+}
+
+h1 {
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.card, .question-card {
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+}
+
+button {
+  width: 100%;
+  padding: 14px 0;
+  font-size: 16px;
+  border-radius: 12px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+pre, code {
+  font-size: 14px;
+  line-height: 1.4;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Larger screen adjustments */
+@media (min-width: 600px) {
+  body {
+    padding: 20px 30px;
+    font-size: 16px;
+  }
+
+  .card, .question-card {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  button {
+    width: auto;
+    padding: 12px 20px;
+  }
+}
+
+/* Landscape or wide screens */
+@media (min-width: 900px) {
+  .levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+  }
+}
+
