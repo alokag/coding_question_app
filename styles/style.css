@@ -1,4 +1,4 @@
-
+/*
 body { font-family: Inter, Arial, sans-serif; background:#f4f6f8; color:#222; margin:0; padding:20px; }
 .container { max-width:900px; margin:0 auto; }
 h1 { text-align:center; margin-bottom:5px; }
@@ -13,7 +13,7 @@ h1 { text-align:center; margin-bottom:5px; }
 .show-btn { background:#0b5fff; color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; }
 .solution { background:#0e0f12; color:#e6e6e6; padding:12px; border-radius:6px; overflow:auto; margin-top:10px; white-space:pre; }
 footer { margin-top:30px; text-align:center; color:#666; }
-
+*/
 /* ---------- Global Styles ---------- */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
