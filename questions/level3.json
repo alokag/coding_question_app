@@ -1,0 +1,116 @@
+[
+  {
+    "title": "Implement LRU Cache (simple Map-based)",
+    "description": "Implement LRU cache with get and put in O(1). Use Map for simplicity.",
+    "sample": "see doc",
+    "solution": "class LRUCache {\n  constructor(cap) {\n    this.cap = cap;\n    this.map = new Map();\n  }\n  get(key) {\n    if (!this.map.has(key)) return -1;\n    const v = this.map.get(key);\n    this.map.delete(key);\n    this.map.set(key, v);\n    return v;\n  }\n  put(key, val) {\n    if (this.map.has(key)) this.map.delete(key);\n    else if (this.map.size >= this.cap) this.map.delete(this.map.keys().next().value);\n    this.map.set(key, val);\n  }\n}\n"
+  },
+  {
+    "title": "Trie - insert and prefix search",
+    "description": "Implement a Trie with insert() and startsWith(prefix).",
+    "sample": "insert 'apple', startsWith('app') -> true",
+    "solution": "class TrieNode { constructor(){ this.children = {}; this.end=false; } }\nclass Trie {\n  constructor(){ this.root = new TrieNode(); }\n  insert(word) {\n    let node = this.root;\n    for (const ch of word) {\n      if (!node.children[ch]) node.children[ch] = new TrieNode();\n      node = node.children[ch];\n    }\n    node.end = true;\n  }\n  startsWith(pref) {\n    let node = this.root;\n    for (const ch of pref) {\n      if (!node.children[ch]) return false;\n      node = node.children[ch];\n    }\n    return true;\n  }\n}\n"
+  },
+  {
+    "title": "Detect cycle in directed graph (DFS)",
+    "description": "Return true if directed graph has cycle using DFS coloring.",
+    "sample": "",
+    "solution": "function hasCycle(graph) {\n  const visited = {};\n  const onStack = {};\n  function dfs(u) {\n    visited[u]=true; onStack[u]=true;\n    for (const v of graph[u]||[]) {\n      if (!visited[v] && dfs(v)) return true;\n      else if (onStack[v]) return true;\n    }\n    onStack[u]=false; return false;\n  }\n  for (const u in graph) if (!visited[u]) if (dfs(u)) return true;\n  return false;\n}\n"
+  },
+  {
+    "title": "Dijkstra's shortest path (adj list)",
+    "description": "Return shortest distances from source to all nodes (non-negative weights).",
+    "sample": "",
+    "solution": "// Note: Minimal example only; a full implementation needs a priority queue.\nfunction dijkstra(adj, src) {\n  const dist = {}; for (const u in adj) dist[u]=Infinity;\n  dist[src]=0;\n  // naive O(V^2) approach for small graphs:\n  const visited = new Set();\n  while (Object.keys(dist).some(k=>!visited.has(k))) {\n    let u = null, best = Infinity;\n    for (const k in dist) if (!visited.has(k) && dist[k] < best) { best = dist[k]; u = k; }\n    if (u === null) break;\n    visited.add(u);\n    for (const [v,w] of adj[u]||[]) {\n      if (dist[u]+w < dist[v]) dist[v] = dist[u]+w;\n    }\n  }\n  return dist;\n}\n"
+  },
+  {
+    "title": "Word ladder (BFS)",
+    "description": "Return shortest transformation length from begin to end using dictionary.",
+    "sample": "",
+    "solution": "function wordLadder(begin, end, dict) {\n  const set = new Set(dict); if (!set.has(end)) return 0;\n  const q = [[begin,1]];\n  const visited = new Set([begin]);\n  while (q.length) {\n    const [word,len] = q.shift();\n    if (word === end) return len;\n    for (let i=0;i<word.length;i++){\n      for (let c=97;c<=122;c++){\n        const next = word.slice(0,i)+String.fromCharCode(c)+word.slice(i+1);\n        if (set.has(next) && !visited.has(next)) { visited.add(next); q.push([next,len+1]); }\n      }\n    }\n  }\n  return 0;\n}\n"
+  },
+  {
+    "title": "Number of islands (DFS)",
+    "description": "Count islands in a 2D grid of '1' (land) and '0' (water).",
+    "sample": "",
+    "solution": "function numIslands(grid) {\n  if (!grid.length) return 0;\n  const m=grid.length,n=grid[0].length; let count=0;\n  function dfs(i,j){\n    if (i<0||j<0||i>=m||j>=n||grid[i][j]==='0') return;\n    grid[i][j]='0';\n    dfs(i+1,j); dfs(i-1,j); dfs(i,j+1); dfs(i,j-1);\n  }\n  for (let i=0;i<m;i++) for (let j=0;j<n;j++) if (grid[i][j]==='1') { count++; dfs(i,j); }\n  return count;\n}\n"
+  },
+  {
+    "title": "Serialize and deserialize binary tree (preorder)",
+    "description": "Serialize tree to string and back using preorder with null markers.",
+    "sample": "",
+    "solution": "function serialize(root) {\n  const res=[];\n  function dfs(node){\n    if (!node) { res.push('#'); return; }\n    res.push(node.val);\n    dfs(node.left); dfs(node.right);\n  }\n  dfs(root); return res.join(',');\n}\nfunction deserialize(data) {\n  const arr = data.split(',');\n  function dfs(){\n    const val = arr.shift();\n    if (val === '#') return null;\n    const node = {val: Number(val), left:null, right:null};\n    node.left = dfs(); node.right = dfs();\n    return node;\n  }\n  return dfs();\n}\n"
+  },
+  {
+    "title": "Topological sort (Kahn's algorithm)",
+    "description": "Return topological order of directed acyclic graph or empty if cycle.",
+    "sample": "",
+    "solution": "function topoSort(graph) {\n  const indeg = {}; for (const u in graph) indeg[u]=indeg[u]||0;\n  for (const u in graph) for (const v of graph[u]) indeg[v]=(indeg[v]||0)+1;\n  const q = [];\n  for (const u in indeg) if (indeg[u]===0) q.push(u);\n  const order = [];\n  while (q.length) {\n    const u = q.shift(); order.push(u);\n    for (const v of graph[u]||[]) {\n      indeg[v]--; if (indeg[v]===0) q.push(v);\n    }\n  }\n  return order.length === Object.keys(indeg).length ? order : [];\n}\n"
+  },
+  {
+    "title": "Implement min-heap (binary heap)",
+    "description": "Provide insert and popMin operations.",
+    "sample": "",
+    "solution": "class MinHeap {\n  constructor(){ this.a = []; }\n  size(){ return this.a.length; }\n  push(val){ this.a.push(val); this._siftUp(this.a.length-1); }\n  pop(){ if (!this.a.length) return null; const ret=this.a[0]; const last=this.a.pop(); if(this.a.length){ this.a[0]=last; this._siftDown(0); } return ret; }\n  _siftUp(i){ while(i>0){ const p=Math.floor((i-1)/2); if (this.a[p]<=this.a[i]) break; [this.a[p],this.a[i]]=[this.a[i],this.a[p]]; i=p; } }\n  _siftDown(i){ const n=this.a.length; while(true){ let l=2*i+1, r=2*i+2, smallest=i; if (l<n && this.a[l]<this.a[smallest]) smallest=l; if (r<n && this.a[r]<this.a[smallest]) smallest=r; if (smallest===i) break; [this.a[i],this.a[smallest]]=[this.a[smallest],this.a[i]]; i=smallest; } }\n  isEmpty(){ return this.a.length===0; }\n}\n"
+  },
+  {
+    "title": "Find median in data stream (two heaps)",
+    "description": "Support addNum(num) and findMedian().",
+    "sample": "",
+    "solution": "// Conceptual: use two heaps (max-heap for lower half, min-heap for upper half).\n// JS heap wrappers would be needed; omitted full wrapper here for brevity.\n"
+  },
+  {
+    "title": "Longest increasing subsequence (n log n)",
+    "description": "Return length of LIS using patience sorting.",
+    "sample": "",
+    "solution": "function lengthOfLIS(nums) {\n  const tails = [];\n  for (const x of nums) {\n    let l=0,r=tails.length;\n    while (l<r) {\n      const m = Math.floor((l+r)/2);\n      if (tails[m] < x) l = m+1; else r = m;\n    }\n    tails[l] = x;\n  }\n  return tails.length;\n}\n"
+  },
+  {
+    "title": "Word break (DP)",
+    "description": "Return true if string can be segmented into dictionary words.",
+    "sample": "",
+    "solution": "function wordBreak(s, wordDict) {\n  const set = new Set(wordDict), n=s.length;\n  const dp = Array(n+1).fill(false); dp[0]=true;\n  for (let i=1;i<=n;i++){\n    for (let j=0;j<i;j++){\n      if (dp[j] && set.has(s.slice(j,i))) { dp[i]=true; break; }\n    }\n  }\n  return dp[n];\n}\n"
+  },
+  {
+    "title": "Edit distance (DP)",
+    "description": "Return minimum edit distance between two strings.",
+    "sample": "",
+    "solution": "function minDistance(a,b) {\n  const m=a.length, n=b.length;\n  const dp = Array.from({length:m+1},()=>Array(n+1).fill(0));\n  for (let i=0;i<=m;i++) dp[i][0]=i;\n  for (let j=0;j<=n;j++) dp[0][j]=j;\n  for (let i=1;i<=m;i++) for (let j=1;j<=n;j++) {\n    if (a[i-1]===b[j-1]) dp[i][j]=dp[i-1][j-1];\n    else dp[i][j]=1+Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);\n  }\n  return dp[m][n];\n}\n"
+  },
+  {
+    "title": "Kruskal's MST (union-find)",
+    "description": "Return total weight of MST using Kruskal's algorithm.",
+    "sample": "",
+    "solution": "function kruskal(n, edges) {\n  edges.sort((a,b)=>a[2]-b[2]);\n  const parent = Array.from({length:n},(_,i)=>i);\n  function find(x){ return parent[x]===x?x:parent[x]=find(parent[x]); }\n  let total=0;\n  for (const [u,v,w] of edges){\n    const pu=find(u), pv=find(v);\n    if (pu!==pv){ parent[pu]=pv; total+=w; }\n  }\n  return total;\n}\n"
+  },
+  {
+    "title": "Subarray sum equals K",
+    "description": "Return number of subarrays that sum to k (prefix sum + map).",
+    "sample": "",
+    "solution": "function subarraySum(nums, k) {\n  const map = {0:1};\n  let sum=0, res=0;\n  for (const n of nums) {\n    sum += n;\n    if (map[sum - k]) res += map[sum-k];\n    map[sum] = (map[sum] || 0)+1;\n  }\n  return res;\n}\n"
+  },
+  {
+    "title": "Maximum subarray (Kadane)",
+    "description": "Return maximum subarray sum.",
+    "sample": "",
+    "solution": "function maxSubArray(nums) {\n  let maxEnding=nums[0], maxSoFar=nums[0];\n  for (let i=1;i<nums.length;i++){ maxEnding = Math.max(nums[i], maxEnding+nums[i]); maxSoFar = Math.max(maxSoFar, maxEnding); }\n  return maxSoFar;\n}\n"
+  },
+  {
+    "title": "Evaluate Reverse Polish Notation",
+    "description": "Compute value of RPN expression",
+    "sample": "",
+    "solution": "function evalRPN(tokens) {\n  const stack = [];\n  for (const t of tokens) {\n    if (['+','-','*','/'].includes(t)) {\n      const b = +stack.pop(), a = +stack.pop();\n      let res = 0;\n      if (t==='+') res = a + b;\n      else if (t==='-') res = a - b;\n      else if (t==='*') res = a * b;\n      else res = (a / b) | 0;\n      stack.push(res);\n    } else stack.push(t);\n  }\n  return +stack.pop();\n}\n"
+  },
+  {
+    "title": "Find duplicate number (Floyd cycle)",
+    "description": "Find duplicate in array where numbers 1..n point to index.",
+    "sample": "",
+    "solution": "function findDuplicate(nums) {\n  let slow=nums[0], fast=nums[0];\n  do { slow = nums[slow]; fast = nums[nums[fast]]; } while (slow !== fast);\n  slow = nums[0];\n  while (slow !== fast) { slow = nums[slow]; fast = nums[fast]; }\n  return slow;\n}\n"
+  },
+  {
+    "title": "Serialize graph adjacency list",
+    "description": "Given graph object, return JSON-friendly serialization.",
+    "sample": "",
+    "solution": "function serializeGraph(graph) { return JSON.stringify(graph); }\nfunction deserializeGraph(s) { return JSON.parse(s); }\n"
+  }
+]

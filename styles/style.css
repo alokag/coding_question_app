@@ -1,0 +1,15 @@
+
+body { font-family: Inter, Arial, sans-serif; background:#f4f6f8; color:#222; margin:0; padding:20px; }
+.container { max-width:900px; margin:0 auto; }
+h1 { text-align:center; margin-bottom:5px; }
+.subtitle { text-align:center; color:#555; margin-top:0; margin-bottom:20px; }
+.levels { display:flex; gap:20px; justify-content:center; margin-bottom:30px; }
+.card { background:white; padding:18px 22px; border-radius:8px; text-decoration:none; color:#222; box-shadow:0 2px 6px rgba(0,0,0,0.08); width:200px; text-align:center; font-weight:600; }
+.card:hover { transform:translateY(-3px); transition:all .15s ease; }
+.question-card { background:white; padding:14px 16px; border-radius:8px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+.question-card h3 { margin:0 0 8px 0; font-size:18px; }
+.question-card .desc { margin:0 0 8px 0; color:#333; }
+.question-card .sample { color:#444; font-size:13px; margin-bottom:8px; }
+.show-btn { background:#0b5fff; color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; }
+.solution { background:#0e0f12; color:#e6e6e6; padding:12px; border-radius:6px; overflow:auto; margin-top:10px; white-space:pre; }
+footer { margin-top:30px; text-align:center; color:#666; }
