@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>.NET & C# Backend Notes — Comprehensive</title>
+  <style>
+    :root{--bg:#f4f6fb;--card:#ffffff;--accent:#0b5fff;--muted:#586374}
+    body{font-family:Inter,Segoe UI,Roboto,system-ui,Arial,sans-serif;background:var(--bg);margin:0;padding:28px;color:#0b2540}
+    .wrap{max-width:1100px;margin:0 auto}
+    header{margin-bottom:18px}
+    h1{font-size:26px;margin:6px 0}
+    p.lead{color:var(--muted);margin-top:0}
+    .toc{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 20px}
+    .chip{background:var(--card);padding:8px 12px;border-radius:999px;border:1px solid rgba(11,95,255,0.08);font-weight:600}
+    .section{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(9,30,66,0.06);margin-bottom:18px}
+    h2{margin-top:0}
+    pre{background:#0f1720;color:#dff7ff;padding:12px;border-radius:10px;overflow:auto}
+    code{font-family:SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+    ul{margin:8px 0 8px 18px}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    table td, table th{padding:8px;border:1px solid #eef2f7}
+    .muted{color:var(--muted)}
+    @media (max-width:720px){body{padding:14px}.wrap{padding:0}pre{font-size:13px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>.NET & C# Backend — Concise Interview Notes (In-depth)</h1>
+      <p class="lead">Focused guide for intermediate .NET backend developers. Read through key topics, patterns, and code snippets you can revise quickly before interviews.</p>
+      <div class="toc">
+        <div class="chip">C# Language</div>
+        <div class="chip">Async / Concurrency</div>
+        <div class="chip">Memory & GC</div>
+        <div class="chip">DI & Clean Architecture</div>
+        <div class="chip">EF Core & Data</div>
+        <div class="chip">APIs & Security</div>
+        <div class="chip">Microservices</div>
+        <div class="chip">Resiliency & Observability</div>
+        <div class="chip">Testing & CI/CD</div>
+      </div>
+    </header>
+
+    <!-- 1 -->
+    <section class="section" id="csharp-core">
+      <h2>1. C# Language — Key Concepts</h2>
+      <p class="muted">Short, precise reminders of language features that matter in backend code.</p>
+
+      <h3>Records vs Classes</h3>
+      <p>Use <code>record</code> for immutable data carriers (value equality by default). Classes are for behavior + identity.</p>
+      <pre><code>// Record (immutable by convention)
+public record UserDto(int Id, string Email);
+
+// Class with behavior
+public class User {
+  public int Id { get; set; }
+  public string Email { get; set; }
+  public void SendWelcome() { /* ... */ }
+}
+      </code></pre>
+
+      <h3>Structs and when to use</h3>
+      <p>Structs are value types — small, immutable, and performance-sensitive (avoid large structs due to copying).</p>
+
+      <h3>Nullable reference types</h3>
+      <pre><code>#nullable enable
+public string? MiddleName { get; set; } // explicitly nullable
+public string LastName { get; set; } = string.Empty; // non-nullable
+#nullable restore
+      </code></pre>
+
+      <h3>Pattern matching & switch expressions</h3>
+      <pre><code>var result = obj switch {
+  null => "none",
+  string s => $"str:{s}",
+  int i when i &gt; 0 => "positive",
+  _ => "other"
+};
+      </code></pre>
+
+      <h3>Generics</h3>
+      <p>Prefer generics for reusable, type-safe components (repositories, caches).</p>
+      <pre><code>public interface IRepository&lt;T&gt; where T : IEntity {
+  Task&lt;T?&gt; GetAsync(Guid id);
+}
+      </code></pre>
+
+    </section>
+
+    <!-- 2 -->
+    <section class="section" id="async">
+      <h2>2. Async / Concurrency / Tasks</h2>
+      <p class="muted">Understand Task-based async (TPL), avoid common pitfalls, and know synchronization primitives.</p>
+
+      <h3>Async/Await best practices</h3>
+      <ul>
+        <li>Prefer <code>async Task</code> over <code>async void</code> (except event handlers).</li>
+        <li>Avoid <code>Task.Run</code> in ASP.NET for normal I/O-bound work — it schedules on ThreadPool unnecessarily.</li>
+        <li>Use <code>ConfigureAwait(false)</code> in libraries when context capture is not needed.</li>
+      </ul>
+      <pre><code>public async Task&lt;User&gt; GetUserAsync(Guid id) {
+  var json = await httpClient.GetStringAsync($"/users/{id}").ConfigureAwait(false);
+  return JsonSerializer.Deserialize&lt;User&gt;(json)!;
+}
+      </code></pre>
+
+      <h3>Parallelism & CPU-bound work</h3>
+      <p>Use <code>Task.Run</code> or Parallel.For when CPU-bound tasks must not block request threads; consider background services for long-running jobs.</p>
+
+      <h3>Cancellation</h3>
+      <pre><code>public async Task ProcessAsync(CancellationToken token) {
+  while(!token.IsCancellationRequested) {
+    await Task.Delay(1000, token);
+  }
+}
+      </code></pre>
+
+      <h3>Synchronization primitives</h3>
+      <p>Know <code>SemaphoreSlim</code> for limiting parallelism, <code>lock</code> for critical sections, and concurrent collections (<code>ConcurrentDictionary</code>).</p>
+      <pre><code>private readonly SemaphoreSlim _sem = new(5);
+await _sem.WaitAsync(token);
+try { /* do work */ } finally { _sem.Release(); }
+      </code></pre>
+
+    </section>
+
+    <!-- 3 -->
+    <section class="section" id="memory-gc">
+      <h2>3. Memory, GC & Performance</h2>
+      <p class="muted">GC behavior affects throughput and latency — know generations and object lifetimes.</p>
+
+      <h3>Generations</h3>
+      <ul>
+        <li>Gen0: short-lived objects</li>
+        <li>Gen1: medium-lived</li>
+        <li>Gen2: long-lived (promoted)</li>
+      </ul>
+
+      <h3>Large Object Heap (LOH)</h3>
+      <p>Objects &gt;85KB go to LOH (pinning/careful usage); repeated allocations can fragment LOH — consider pooling.</p>
+
+      <h3>Value vs Reference allocations</h3>
+      <p>Use structs for high-frequency small types; use <code>Span&lt;T&gt;</code> / <code>Memory&lt;T&gt;</code> to avoid allocations when slicing arrays or strings.</p>
+      <pre><code>ReadOnlySpan&lt;char&gt; span = myString.AsSpan(0, 10);
+      </code></pre>
+
+      <h3>Pooling</h3>
+      <p>Use <code>ArrayPool&lt;T&gt;</code> or object pools to reduce GC pressure.</p>
+      <pre><code>var pool = ArrayPool&lt;byte&gt;.Shared;
+byte[] buffer = pool.Rent(8192);
+// use buffer
+pool.Return(buffer);
+      </code></pre>
+
+      <h3>Profiling tips</h3>
+      <ul>
+        <li>Use dotnet-counters, dotnet-trace, PerfView, or Visual Studio diagnostic tools.</li>
+        <li>Look for high gen2 collections and LOH fragmentation when diagnosing pauses.</li>
+      </ul>
+    </section>
+
+    <!-- 4 -->
+    <section class="section" id="di-clean">
+      <h2>4. Dependency Injection & Clean Architecture</h2>
+      <p class="muted">Built-in DI in ASP.NET Core is the foundation for testable, modular backends. Clean architecture separates concerns into layers.</p>
+
+      <h3>Registration scopes</h3>
+      <ul>
+        <li><code>AddSingleton</code> — single instance for app lifetime</li>
+        <li><code>AddScoped</code> — per-request</li>
+        <li><code>AddTransient</code> — new instance every injection</li>
+      </ul>
+
+      <h3>Example: Configure DI</h3>
+      <pre><code>builder.Services.AddScoped&lt;IUserRepository, UserRepository&gt;();
+builder.Services.AddSingleton&lt;ICacheService, MemoryCacheService&gt;();
+      </code></pre>
+
+      <h3>Clean Architecture layers</h3>
+      <ul>
+        <li><strong>Domain</strong> — entities, value objects, domain services</li>
+        <li><strong>Application</strong> — use-cases, DTOs, interfaces</li>
+        <li><strong>Infrastructure</strong> — EF Core, external integrations</li>
+        <li><strong>API</strong> — controllers, minimal APIs</li>
+      </ul>
+
+      <h3>Example: Use case (Service) pattern</h3>
+      <pre><code>public class CreateOrderHandler {
+  private readonly IOrderRepository _repo;
+  public CreateOrderHandler(IOrderRepository repo) => _repo = repo;
+  public async Task&lt;Order&gt; Handle(CreateOrderCmd cmd) {
+    var order = Order.Create(cmd);
+    await _repo.AddAsync(order);
+    return order;
+  }
+}
+      </code></pre>
+
+    </section>
+
+    <!-- 5 -->
+    <section class="section" id="data-efcore">
+      <h2>5. Data Access — EF Core, Dapper & Patterns</h2>
+      <p class="muted">Choose the right tool: EF Core for productivity & modeling, Dapper for raw performance & mapping.</p>
+
+      <h3>DbContext best practices</h3>
+      <ul>
+        <li>Register context as <code>AddDbContext&lt;AppDbContext&gt;()</code> (scoped).</li>
+        <li>Avoid long-lived DbContext instances (per-request scope is ideal).</li>
+        <li>Use explicit projections (.Select) to avoid tracking heavy graphs.</li>
+      </ul>
+
+      <h3>Example: Projection to DTO</h3>
+      <pre><code>var list = await _context.Users
+  .Where(u =&gt; u.IsActive)
+  .Select(u =&gt; new UserDto(u.Id, u.Email))
+  .ToListAsync();
+</code></pre>
+
+      <h3>Transactions & Unit of Work</h3>
+      <pre><code>using var tx = await _context.Database.BeginTransactionAsync();
+try {
+  // operations
+  await _context.SaveChangesAsync();
+  await tx.CommitAsync();
+} catch {
+  await tx.RollbackAsync();
+  throw;
+}
+      </code></pre>
+
+      <h3>Dapper for micro-queries</h3>
+      <pre><code>var conn = new SqlConnection(connString);
+var rows = await conn.QueryAsync&lt;User&gt;("SELECT Id, Email FROM Users WHERE IsActive=1");
+      </code></pre>
+
+      <h3>Performance tips</h3>
+      <ul>
+        <li>Use <code>AsNoTracking()</code> for read-only queries.</li>
+        <li>Prefer server-side pagination and filtering.</li>
+        <li>Watch generated SQL (Use <code>ToQueryString()</code> in EF Core 6+).</li>
+      </ul>
+
+    </section>
+
+    <!-- 6 -->
+    <section class="section" id="apis-security">
+      <h2>6. REST APIs, Versioning & Security</h2>
+
+      <h3>Designing APIs</h3>
+      <ul>
+        <li>Follow resource-oriented routes: <code>/api/orders</code>, <code>/api/orders/{id}</code>.</li>
+        <li>Use correct HTTP verbs and status codes.</li>
+        <li>Document using OpenAPI/Swagger and keep versions (v1, v2).</li>
+      </ul>
+
+      <h3>API Versioning</h3>
+      <pre><code>// via package Microsoft.AspNetCore.Mvc.Versioning
+services.AddApiVersioning(options =&gt; {
+  options.AssumeDefaultVersionWhenUnspecified = true;
+  options.DefaultApiVersion = new ApiVersion(1,0);
+});
+      </code></pre>
+
+      <h3>Authentication & Authorization</h3>
+      <p>Use JWTs for stateless auth; store refresh tokens securely. Prefer OAuth/OIDC (IdentityServer or external providers) for SSO.</p>
+      <pre><code>// JWT (simplified)
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+  .AddJwtBearer(options =&gt; {
+    options.TokenValidationParameters = new TokenValidationParameters {
+      ValidateIssuer = true,
+      ValidateAudience = true,
+      ValidateLifetime = true,
+      ValidateIssuerSigningKey = true,
+      ValidIssuer = "https://auth.myapp",
+      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+    };
+  });
+      </code></pre>
+
+      <h3>Protecting APIs</h3>
+      <ul>
+        <li>Use HTTPS only; enforce HSTS.</li>
+        <li>Validate inputs, use model validation attributes.</li>
+        <li>Rate limiting and throttling (IP or API key based).</li>
+        <li>Secure secrets with Azure Key Vault / HashiCorp Vault.</li>
+      </ul>
+    </section>
+
+    <!-- 7 -->
+    <section class="section" id="microservices">
+      <h2>7. Microservices & Messaging</h2>
+      <p class="muted">Patterns for distributed systems: messaging, service discovery, and data consistency patterns.</p>
+
+      <h3>Synchronous vs Asynchronous</h3>
+      <ul>
+        <li>Synchronous: HTTP/REST, simple but couples availability/latency.</li>
+        <li>Asynchronous: Message brokers (RabbitMQ, Kafka) — decouples services.</li>
+      </ul>
+
+      <h3>Messaging example (publish/subscribe)</h3>
+      <pre><code>// Pseudo example with RabbitMQ client
+using var channel = connection.CreateModel();
+channel.ExchangeDeclare("orders", ExchangeType.Fanout);
+var body = Encoding.UTF8.GetBytes(json);
+channel.BasicPublish("orders", "", null, body);
+      </code></pre>
+
+      <h3>Saga pattern & data consistency</h3>
+      <p>Use Saga (or orchestration/choreography) for multi-step transactions across services — implement compensating actions for failures.</p>
+
+      <h3>Service discovery & API Gateway</h3>
+      <p>Use load balancers or service registries (Consul) and API Gateways for routing, auth, rate-limiting, and aggregation.</p>
+    </section>
+
+    <!-- 8 -->
+    <section class="section" id="resiliency">
+      <h2>8. Resiliency, Retries & Transient Fault Handling</h2>
+      <p class="muted">Polly is the de-facto library for resiliency in .NET.</p>
+
+      <h3>Common policies</h3>
+      <ul>
+        <li>Retry with exponential backoff</li>
+        <li>Circuit Breaker</li>
+        <li>Timeout</li>
+        <li>Bulkhead isolation</li>
+      </ul>
+
+      <h3>Polly example</h3>
+      <pre><code>var retry = Policy.Handle&lt;HttpRequestException&gt;()
+  .WaitAndRetryAsync(3, retryAttempt =&gt; TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+
+await retry.ExecuteAsync(async () =&gt; await httpClient.GetAsync(url));
+      </code></pre>
+
+    </section>
+
+    <!-- 9 -->
+    <section class="section" id="caching">
+      <h2>9. Caching Strategies</h2>
+      <p class="muted">Cache near the edge first (CDN), then application / DB level.</p>
+
+      <h3>Types</h3>
+      <ul>
+        <li>In-memory (IMemoryCache) — simple, per instance</li>
+        <li>Distributed (Redis) — shared across instances</li>
+        <li>HTTP Caching (Cache-Control, ETag)</li>
+      </ul>
+
+      <h3>Redis example</h3>
+      <pre><code>services.AddStackExchangeRedisCache(options =&gt; {
+  options.Configuration = redisConnectionString;
+  options.InstanceName = "myapp:";
+});
+
+// usage
+await _cache.SetStringAsync(key, json, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) });
+      </code></pre>
+
+    </section>
+
+    <!-- 10 -->
+    <section class="section" id="observability">
+      <h2>10. Logging, Metrics & Tracing</h2>
+      <p class="muted">Observability is critical: structured logging, distributed tracing, and metrics.</p>
+
+      <h3>Logging</h3>
+      <pre><code>// Serilog example
+Log.Logger = new LoggerConfiguration()
+  .Enrich.FromLogContext()
+  .WriteTo.Console()
+  .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+  .CreateLogger();
+
+builder.Host.UseSerilog();
+      </code></pre>
+
+      <h3>Metrics</h3>
+      <p>Expose Prometheus metrics via prometheus-net or OpenTelemetry metrics.</p>
+
+      <h3>Tracing</h3>
+      <p>Use OpenTelemetry for distributed traces (instrument HTTP client, incoming requests, DB calls).</p>
+
+    </section>
+
+    <!-- 11 -->
+    <section class="section" id="testing">
+      <h2>11. Testing — Unit, Integration, Contract</h2>
+      <p class="muted">Testing pyramid: many unit tests, fewer integration tests, small number of end-to-end tests.</p>
+
+      <h3>Unit tests</h3>
+      <pre><code>[Fact]
+public async Task CreateOrder_CallsRepo() {
+  var repo = new Mock&lt;IOrderRepository&gt;();
+  var handler = new CreateOrderHandler(repo.Object);
+  await handler.Handle(new CreateOrderCmd(...));
+  repo.Verify(r =&gt; r.AddAsync(It.IsAny&lt;Order&gt;()), Times.Once);
+}
+      </code></pre>
+
+      <h3>Integration tests</h3>
+      <p>Use in-memory DB (Sqlite) or Testcontainers to run realistic integration suites.</p>
+    </section>
+
+    <!-- 12 -->
+    <section class="section" id="ci-cd">
+      <h2>12. Deployments, Containers & CI/CD</h2>
+
+      <h3>Dockerfile (basic)</h3>
+      <pre><code>FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["MyApp.csproj", "./"]
+RUN dotnet restore "MyApp.csproj"
+COPY . .
+RUN dotnet publish -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "MyApp.dll"]
+      </code></pre>
+
+      <h3>Kubernetes basics</h3>
+      <p>Understand Deployments, Services, ConfigMaps, Secrets, and readiness/liveness probes.</p>
+
+      <h3>CI/CD</h3>
+      <p>Automate builds, tests, image push, and deploy (GitHub Actions, Azure DevOps, GitLab CI).</p>
+    </section>
+
+    <!-- 13 -->
+    <section class="section" id="security-best">
+      <h2>13. Security Best Practices</h2>
+      <ul>
+        <li>Validate and sanitize inputs; use parameterized queries to avoid SQL injection.</li>
+        <li>Use HTTPS and secure headers (HSTS, CSP).</li>
+        <li>Rotate and protect secrets (Key Vault, Vault).</li>
+        <li>Use least privilege principle for services and DB users.</li>
+        <li>Enable logging for auth events and failed attempts.</li>
+      </ul>
+    </section>
+
+    <!-- 14 -->
+    <section class="section" id="patterns">
+      <h2>14. Useful Patterns & Architectures</h2>
+      <ul>
+        <li><strong>CQRS</strong> — separate read/write models for scalability.</li>
+        <li><strong>Event sourcing</strong> — store events as source of truth.</li>
+        <li><strong>Message-driven</strong> — asynchronous integration via messages.</li>
+        <li><strong>Backends for frontends</strong> — tailor APIs per client type.</li>
+      </ul>
+    </section>
+
+    <!-- 15 -->
+    <section class="section" id="interview-tips">
+      <h2>15. Quick Interview Tips & Common Questions</h2>
+      <ul>
+        <li>Explain trade-offs: SQL vs NoSQL, monolith vs microservices, eventual consistency.</li>
+        <li>Be ready to describe how you handled a production incident and mitigations.</li>
+        <li>Know a few code snippets (DI, EF query, async) by heart.</li>
+        <li>Practice explaining how GC works, and how you'd diagnose latency spikes.</li>
+      </ul>
+    </section>
+
+    <footer style="text-align:center;color:var(--muted);margin-top:10px">Prepared for quick interview revision — tweak examples to match your app & .NET version.</footer>
+  </div>
+</body>
+</html>
